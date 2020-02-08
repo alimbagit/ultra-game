@@ -9,25 +9,25 @@ public class HumanPersonController : MonoBehaviour
     public Transform m_WeaponSlot1;
     public Transform m_WeaponSlot2;
 
+    private Animator m_Animator;
+    private float m_FireTime = 0;
     private HumanWalking m_HumanWalking;
     private Vector3 m_Walking = new Vector3(0,0,0);              
     public enum m_NumberWeapons { first,second};
     
     private void Start()
     {
+        m_Animator = GetComponent<Animator>();
         m_HumanWalking = GetComponent<HumanWalking>();
         if(m_FirstWeapon) SetWeapon(m_FirstWeapon, m_NumberWeapons.first, m_WeaponSlot1);
-        if (m_SecondWeapon) SetWeapon(m_SecondWeapon, m_NumberWeapons.second, m_WeaponSlot1);
+        if (m_SecondWeapon) SetWeapon(m_SecondWeapon, m_NumberWeapons.second, m_WeaponSlot2);
     }
 
 
     private void FixedUpdate()
     {
-
         Walking();
         Fire();
-
-
     }
 
     private void Walking()
@@ -45,7 +45,15 @@ public class HumanPersonController : MonoBehaviour
     {
         if (m_FirstWeapon  && Input.GetButton("Fire1"))
         {
+
             m_FirstWeapon.GetComponent<GunShooting>().Fire();
+            m_FireTime += Time.deltaTime;
+            m_Animator.SetFloat("Shooting", m_FireTime);
+        }
+        else
+        {
+            m_FireTime = 0f;
+            m_Animator.SetFloat("Shooting", m_FireTime);
         }
 
         if (m_SecondWeapon && Input.GetButton("Fire2"))
@@ -57,14 +65,30 @@ public class HumanPersonController : MonoBehaviour
 
     public void SetWeapon(GameObject weapon, m_NumberWeapons number, Transform weapon_slot)
     {
-        if (number == m_NumberWeapons.first)
+        if (weapon.scene.name == this.gameObject.scene.name)
         {
-            m_FirstWeapon = Instantiate(weapon, weapon_slot.position, weapon_slot.rotation,transform) as GameObject;
-        } 
-        else if(number == m_NumberWeapons.second)
+            if (number == m_NumberWeapons.first)
+            {
+                m_FirstWeapon = weapon;
+                m_FirstWeapon.transform.position = weapon_slot.position;
+            }
+            else if (number == m_NumberWeapons.second)
+            {
+                m_SecondWeapon = weapon;
+                m_SecondWeapon.transform.position = weapon_slot.position;
+            }
+        }
+        else
         {
-            m_SecondWeapon = Instantiate(weapon, weapon_slot.position, weapon_slot.rotation, transform) as GameObject;
-        } 
+            if (number == m_NumberWeapons.first)
+            {
+                m_FirstWeapon = Instantiate(weapon, weapon_slot.position, weapon_slot.rotation, transform) as GameObject;
+            }
+            else if (number == m_NumberWeapons.second)
+            {
+                m_SecondWeapon = Instantiate(weapon, weapon_slot.position, weapon_slot.rotation, transform) as GameObject;
+            }
+        }
     }
 }
 

@@ -34,6 +34,7 @@ public class GunShooting : MonoBehaviour
     public void Fire()
     {
         m_Timer += Time.deltaTime;
+
         if (m_Timer >= m_TimeOneShell)
         {
             Rigidbody shellInstance = Instantiate(m_Shell, m_ShellSpawn.position, m_ShellSpawn.rotation) as Rigidbody;
@@ -42,6 +43,7 @@ public class GunShooting : MonoBehaviour
             m_ShootingAudio.clip = m_FireClip;
             m_ShootingAudio.Play();
             m_Timer = 0;
+
         }
     }
 
