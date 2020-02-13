@@ -39,6 +39,7 @@ public class HumanWalking : MonoBehaviour
 		m_WalkingAmount = walking.magnitude;
 
 		if (!m_OnWalkingForward) walking *= 0.5f;
+		//else walking *= 0.8f;
 		walking = walking * m_MoveSpeed * Time.deltaTime;
 		m_Rigidbody.MovePosition(m_Rigidbody.position + walking);
 		Turning();
@@ -50,11 +51,7 @@ public class HumanWalking : MonoBehaviour
 		m_Animator.SetBool("OnWalkingBack", m_OnWalkingBack);
 		m_Animator.SetFloat("Walking", m_WalkingAmount);
 		m_Animator.SetFloat("Side", m_WalkingSide);
-		//m_Animator.SetFloat("Walking", m_WalkingAmount, 0.1f, Time.deltaTime);
-		//m_Animator.SetFloat("Side", m_WalkingSide, 0.1f, Time.deltaTime);
 
-		Debug.Log(m_OnWalkingBack);
-		//m_Animator.speed = m_OnWalkingForward ? 1f : 0.7f;
 	}
 
 	public void OnAnimatorMove()

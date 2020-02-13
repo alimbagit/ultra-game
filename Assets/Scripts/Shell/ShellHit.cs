@@ -7,13 +7,12 @@ public class ShellHit : MonoBehaviour
 {
     public float m_Damage = 15f;
     public float m_MaxLifeTime = 1.5f;
-    // Start is called before the first frame update
+
     void Start()
     {
         Destroy(gameObject, m_MaxLifeTime);
     }
 
-    // Update is called once per frame
     void Update()
     {
         
