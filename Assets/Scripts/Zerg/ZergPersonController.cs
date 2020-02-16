@@ -4,10 +4,10 @@ using UnityEngine;
 
 public class ZergPersonController : MonoBehaviour
 {
-    private ZergAttack m_Attack;
+    private ZergAttacking m_Attack;
     void Start()
     {
-        m_Attack = gameObject.GetComponent<ZergAttack>();
+        m_Attack = gameObject.GetComponent<ZergAttacking>();
         
     }
 
@@ -16,8 +16,8 @@ public class ZergPersonController : MonoBehaviour
         
     }
 
-    public void Attack()
+    public void Attacking()
     {
-        m_Attack.Attack();
+        m_Attack.AttackingStartAnimation();
     }
 }
