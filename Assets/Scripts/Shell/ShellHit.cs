@@ -21,8 +21,13 @@ public class ShellHit : MonoBehaviour
     private void OnTriggerEnter(Collider other)
     {
         m_Damage.size_damage = m_SizeDamage;
-        m_Damage.point_damage = transform.position;
+        //m_Damage.point_damage = transform.position;
         other.gameObject.SendMessage("TakeDamage", m_Damage, SendMessageOptions.DontRequireReceiver);
-        //Destroy(this.gameObject);
+        Destroy(this.gameObject);
+    }
+
+    public void SetPositionSpawn(Vector3 pos)
+    {
+        m_Damage.point_damage = pos;
     }
 }

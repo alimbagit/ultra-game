@@ -12,7 +12,8 @@ public class HumanPersonController : MonoBehaviour
     private Animator m_Animator;
     private float m_FireTime = 0;
     private HumanWalking m_HumanWalking;
-    private Vector3 m_Walking = new Vector3(0,0,0);              
+    private Vector3 m_Walking = new Vector3(0,0,0);
+    private Config.Axes m_ConfigAxes;
     public enum m_NumberWeapons { first,second};
     
     private void Start()
@@ -21,8 +22,13 @@ public class HumanPersonController : MonoBehaviour
         m_HumanWalking = GetComponent<HumanWalking>();
         if(m_FirstWeapon) SetWeapon(m_FirstWeapon, m_NumberWeapons.first, m_WeaponSlot1);
         if (m_SecondWeapon) SetWeapon(m_SecondWeapon, m_NumberWeapons.second, m_WeaponSlot2);
+        m_ConfigAxes = GameObject.FindGameObjectWithTag("Config").GetComponent<Config>().axes;
     }
 
+    private void Update()
+    {
+        RealoadGunAnimation(m_FirstWeapon);
+    }
 
     private void FixedUpdate()
     {
@@ -43,12 +49,19 @@ public class HumanPersonController : MonoBehaviour
 
     private void Fire()
     {
-        if (m_FirstWeapon  && Input.GetButton("Fire1"))
+        if (m_FirstWeapon && Input.GetButton("Fire1"))
         {
+            if (m_FirstWeapon.GetComponent<GunShooting>().GetCurrentCountOfShells() > 0)
+            {
+                m_FirstWeapon.GetComponent<GunShooting>().Fire();
+                m_FireTime += Time.deltaTime;
+                m_Animator.SetFloat("Shooting", m_FireTime);
+            }
 
-            m_FirstWeapon.GetComponent<GunShooting>().Fire();
-            m_FireTime += Time.deltaTime;
-            m_Animator.SetFloat("Shooting", m_FireTime);
+            else
+            {
+                Debug.Log("reaload gun");
+            }
         }
         else
         {
@@ -62,6 +75,18 @@ public class HumanPersonController : MonoBehaviour
         }
     }
 
+    private void RealoadGunAnimation(GameObject gun)
+    {
+        if (Input.GetButtonDown(m_ConfigAxes.reload_weapon))
+        {
+            m_Animator.SetTrigger("OnReaload");
+        }
+    }
+    public void ReloadGun()
+    {
+        Debug.Log("ReloadGun");
+        m_FirstWeapon.GetComponent<GunShooting>().RealoadGun();
+    }
 
     public void SetWeapon(GameObject weapon, m_NumberWeapons number, Transform weapon_slot)
     {

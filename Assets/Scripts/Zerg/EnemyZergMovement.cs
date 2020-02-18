@@ -11,6 +11,7 @@ public class EnemyZergMovement : MonoBehaviour
     private bool m_IsAttacking = false;
     private bool m_IsMove = true;
     private float m_RangeAttack;
+
     private ZergAttacking m_ZergAttacking;
     private ZergHealth m_PlayerHealth;
     private Vector3 m_TargetPosition;
@@ -21,13 +22,10 @@ public class EnemyZergMovement : MonoBehaviour
         m_Animator=GetComponent<Animator>();
         m_ZergAttacking = GetComponent<ZergAttacking>();
         m_RangeAttack = m_ZergAttacking.m_RangeAttack;
-        // Set up the references.
         m_Player = GameObject.FindGameObjectWithTag(m_TargetTag).transform;
-        //playerHealth = player.GetComponent<ZergHealth>();
-        //enemyHealth = GetComponent<ZergHealth>();
         m_NavAgent = GetComponent<NavMeshAgent>();
     }
- 
+
     void FixedUpdate()
     {
         //Debug.Log(m_Player.name);

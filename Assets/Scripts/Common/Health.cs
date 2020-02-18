@@ -63,5 +63,6 @@ public class Health : MonoBehaviour
     protected virtual void OnDeathAnimation(Damage damage)
     {
         m_Dead = true;
+        Destroy( m_Slider.transform.parent.gameObject);
     }
 }
