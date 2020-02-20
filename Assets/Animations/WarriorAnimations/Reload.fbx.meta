@@ -506,7 +506,7 @@ ModelImporter:
       - time: 1
         functionName: ReloadGun
         data: 
-        objectReferenceParameter: {fileID: 11500000, guid: 521b611700410be45810047f0a74e899,
+        objectReferenceParameter: {fileID: 11500000, guid: db26c45612b1dfb46a235a08ac93245d,
           type: 3}
         floatParameter: 0
         intParameter: 0

@@ -4,25 +4,25 @@ using UnityEngine;
 
 public class AbilityBoostRun : Ability
 {
+    private float m_Timer;
     public float m_SpeedBoost = 2f;
-    void FixedUpdate()
+    private void FixedUpdate()
     {
-        if (m_OnStart) 
+        if (m_OnStart)
         {
+            m_Timer += Time.deltaTime;
             if (m_DealayTime <= m_Timer)
             {
                 OnEffects();
                 m_Timer = 0f;
                 m_OnStart = false;
-            }
-            else
-            {
-                m_Timer += Time.deltaTime;
+                m_IsAvailable = false;
+                Debug.Log(m_IsAvailable);
             }
         }
     }
 
-    private void OnEffects()
+    protected void OnEffects()
     {
         GameObject newEffect = Instantiate(m_EffectsList[0]) as GameObject;
         transform.parent.parent.gameObject.GetComponent<HumanEffectsController>().SetEffect(newEffect);

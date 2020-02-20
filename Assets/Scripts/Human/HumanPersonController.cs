@@ -1,119 +1,86 @@
 using System;
 using UnityEngine;
+using UnityEngine.UI;
 
 [RequireComponent(typeof (HumanWalking))]
 public class HumanPersonController : MonoBehaviour
 {
-    public GameObject m_FirstWeapon;
-    public GameObject m_SecondWeapon;
-    public Transform m_WeaponSlot1;
-    public Transform m_WeaponSlot2;
+    public Transform m_WeaponSlot;
+    public GameObject[] m_Weapons;
 
-    private Animator m_Animator;
-    private float m_FireTime = 0;
+    private int m_CurrentWeaponIndex=0;
+    //private Animator m_Animator;
     private HumanWalking m_HumanWalking;
     private Vector3 m_Walking = new Vector3(0,0,0);
     private Config.Axes m_ConfigAxes;
-    public enum m_NumberWeapons { first,second};
+    private HumanShooting m_HumanShooting;
     
     private void Start()
     {
-        m_Animator = GetComponent<Animator>();
+        m_HumanShooting = GetComponent<HumanShooting>();
+        //m_Animator = GetComponent<Animator>();
         m_HumanWalking = GetComponent<HumanWalking>();
-        if(m_FirstWeapon) SetWeapon(m_FirstWeapon, m_NumberWeapons.first, m_WeaponSlot1);
-        if (m_SecondWeapon) SetWeapon(m_SecondWeapon, m_NumberWeapons.second, m_WeaponSlot2);
-        m_ConfigAxes = GameObject.FindGameObjectWithTag("Config").GetComponent<Config>().axes;
-    }
 
-    private void Update()
-    {
-        RealoadGunAnimation(m_FirstWeapon);
+        InitializeWeapons();
+
+        m_ConfigAxes = GameObject.FindGameObjectWithTag("Config").GetComponent<Config>().axes;
     }
 
     private void FixedUpdate()
     {
         Walking();
-        Fire();
+        m_HumanShooting.Fire(m_ConfigAxes.fire1.name);
     }
 
     private void Walking()
     {
-        float h = Input.GetAxis("Horizontal");
-        float v = Input.GetAxis("Vertical");
+        float h = Input.GetAxis(m_ConfigAxes.horizontal.name);
+        float v = Input.GetAxis(m_ConfigAxes.vertical.name);
 
         m_Walking.x = h;
         m_Walking.z = v;
         m_HumanWalking.Walking(m_Walking);
     }
 
-
-    private void Fire()
+    private void InitializeWeapons()
     {
-        if (m_FirstWeapon && Input.GetButton("Fire1"))
+        if (m_Weapons.Length > 0)
         {
-            if (m_FirstWeapon.GetComponent<GunShooting>().GetCurrentCountOfShells() > 0)
-            {
-                m_FirstWeapon.GetComponent<GunShooting>().Fire();
-                m_FireTime += Time.deltaTime;
-                m_Animator.SetFloat("Shooting", m_FireTime);
-            }
+            SetWeapon(m_CurrentWeaponIndex);
+        }
+    }
 
-            else
-            {
-                Debug.Log("reaload gun");
-            }
+    public void SetWeapon(int index)
+    {
+        m_CurrentWeaponIndex = index;
+        for (int i = 0; i < m_Weapons.Length; i++)
+        {
+            m_Weapons[i].SetActive(false);
+        }
+        if (m_Weapons[index].scene.name == this.gameObject.scene.name)
+        {
+
+            m_Weapons[index].SetActive(true);
+            //m_Weapons[index].transform.parent = m_WeaponSlot.parent;
+            //m_Weapons[index].transform.position = m_WeaponSlot.position;
         }
         else
         {
-            m_FireTime = 0f;
-            m_Animator.SetFloat("Shooting", m_FireTime);
+            m_Weapons[index] = Instantiate(m_Weapons[index], m_WeaponSlot.position, m_WeaponSlot.rotation, m_WeaponSlot.parent);
         }
-
-        if (m_SecondWeapon && Input.GetButton("Fire2"))
+        if (m_Weapons[index].GetComponent<Gun>())
         {
-            m_SecondWeapon.GetComponent<GunShooting>().Fire();
+            GetComponent<HumanShooting>().SetGun(m_Weapons[index]);
+        }
+        else if (m_Weapons[index].GetComponent<MeleeWeapon>())
+        {
+            Debug.Log("This is meele weapon");
         }
     }
 
-    private void RealoadGunAnimation(GameObject gun)
+    public GameObject GetCurrentActiveWeapon()
     {
-        if (Input.GetButtonDown(m_ConfigAxes.reload_weapon))
-        {
-            m_Animator.SetTrigger("OnReaload");
-        }
-    }
-    public void ReloadGun()
-    {
-        Debug.Log("ReloadGun");
-        m_FirstWeapon.GetComponent<GunShooting>().RealoadGun();
-    }
-
-    public void SetWeapon(GameObject weapon, m_NumberWeapons number, Transform weapon_slot)
-    {
-        if (weapon.scene.name == this.gameObject.scene.name)
-        {
-            if (number == m_NumberWeapons.first)
-            {
-                m_FirstWeapon = weapon;
-                m_FirstWeapon.transform.position = weapon_slot.position;
-            }
-            else if (number == m_NumberWeapons.second)
-            {
-                m_SecondWeapon = weapon;
-                m_SecondWeapon.transform.position = weapon_slot.position;
-            }
-        }
-        else
-        {
-            if (number == m_NumberWeapons.first)
-            {
-                m_FirstWeapon = Instantiate(weapon, weapon_slot.position, weapon_slot.rotation, transform) as GameObject;
-            }
-            else if (number == m_NumberWeapons.second)
-            {
-                m_SecondWeapon = Instantiate(weapon, weapon_slot.position, weapon_slot.rotation, transform) as GameObject;
-            }
-        }
+        return m_Weapons[m_CurrentWeaponIndex];
     }
 }
 

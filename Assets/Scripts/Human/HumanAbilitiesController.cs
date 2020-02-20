@@ -7,9 +7,9 @@ public class HumanAbilitiesController : MonoBehaviour
 {
     public GameObject m_SlotAbilities;
     public GameObject[] m_Abilities;
-    public GameObject m_UICanvasAbilities;
+    public UIAbilitiesIcon m_UICanvasAbilities;
 
-    private string[] m_AxesAbilities;
+    private Config.OneAxis[] m_AxesAbilities;
     private Dictionary<string, GameObject> m_ButtonAbilities = new Dictionary<string, GameObject>();   
 
     void Awake()
@@ -24,7 +24,7 @@ public class HumanAbilitiesController : MonoBehaviour
             GameObject ability = Instantiate(m_Abilities[i]) as GameObject;
             ability.transform.parent = m_SlotAbilities.transform;
             ability.transform.position = m_SlotAbilities.transform.position;
-            m_ButtonAbilities.Add(m_AxesAbilities[i],ability);
+            m_ButtonAbilities.Add(m_AxesAbilities[i].name,ability);
         }
         FillSlotAbilities();
     }
@@ -37,14 +37,30 @@ public class HumanAbilitiesController : MonoBehaviour
             {
                 ability.Value.GetComponent<Ability>().StartAbility();
             }
-        }    
+        }
+
+        FillSlotAbilities();
     }
 
     private void FillSlotAbilities()
     {
-        for(int i = 0; i < m_AxesAbilities.Length; i++)
+        for (int i = 0; i < m_AxesAbilities.Length; i++)
         {
-            m_UICanvasAbilities.transform.GetChild(i).gameObject.GetComponentInChildren<Text>().text=m_AxesAbilities[i];
+            if (m_ButtonAbilities.Count>i)
+            {
+                if (m_ButtonAbilities[m_AxesAbilities[i].name].GetComponent<Ability>().GetIsAvailable())
+                {
+                    m_UICanvasAbilities.SetTextIconAbility(i, m_AxesAbilities[i].positive);
+                }
+                else
+                {
+                    m_UICanvasAbilities.SetTextIconAbility(i, m_ButtonAbilities[m_AxesAbilities[i].name].GetComponent<Ability>().GetTimer().ToString());
+                }
+            }
+            else
+            {
+                m_UICanvasAbilities.SetTextIconAbility(i, m_AxesAbilities[i].positive);
+            }
         }
     }
 }

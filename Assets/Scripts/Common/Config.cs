@@ -4,86 +4,56 @@ using UnityEngine;
 using UnityEditor;
 public class Config : MonoBehaviour
 {
+    public class OneAxis
+    {
+        public OneAxis(string name_key, string positive_key)
+        {
+            name = name_key;
+            positive = positive_key;
+        }
+        public OneAxis(string name_key, string positive_key,string negative_key)
+        {
+            name = name_key;
+            positive = positive_key;
+            negative = negative_key;
+        }
+        public string positive;
+        public string negative;
+        public string name;
+    }
     public struct Axes
     {
-        public string horizontal;
-        public string vertical;
+        public OneAxis horizontal;
+        public OneAxis vertical;
 
-        public string[] abilities;
-        //public string ability1;
-        //public string ability2;
-        //public string ability3;
-        //public string ability4;
-        //public string ability5;
-        //public string ability6;
-        public string to_config;
-        public string reload_weapon;
-        public string fire1;
-        public string fire2;
-        public string jump;
+        public OneAxis[] abilities;
+        public OneAxis to_config;
+        public OneAxis reload_weapon;
+        public OneAxis fire1;
+        public OneAxis fire2;
+        public OneAxis jump;
     }
 
     public Axes axes;
 
-
-    public static void ReadAxes()
-    {
-        var inputManager = AssetDatabase.LoadAllAssetsAtPath("ProjectSettings/InputManager.asset")[0];
-
-        SerializedObject obj = new SerializedObject(inputManager);
-
-        SerializedProperty axisArray = obj.FindProperty("m_Axes");
-
-        if (axisArray.arraySize == 0)
-            Debug.Log("No Axes");
-
-        for (int i = 0; i < axisArray.arraySize; ++i)
-        {
-            var axis = axisArray.GetArrayElementAtIndex(i);
-
-            var name = axis.FindPropertyRelative("m_Name").stringValue;
-            var axisVal = axis.FindPropertyRelative("axis").intValue;
-            var inputType = (InputType)axis.FindPropertyRelative("type").intValue;
-
-            Debug.Log(name);
-            Debug.Log(axisVal);
-            Debug.Log(inputType);
-        }
-    }
-
-    public enum InputType
-    {
-        KeyOrMouseButton,
-        MouseMovement,
-        JoystickAxis,
-    };
-
-    [MenuItem("Assets/ReadInputManager")]
-    public static void DoRead()
-    {
-        ReadAxes();
-    }
-
     void Awake()
     {
-        DoRead();
-        axes.horizontal = "Horizontal";
-        axes.vertical = "Vertical";
-        axes.abilities = new string[6];
-        axes.abilities[0] = "Ability1";
-        axes.abilities[1] = "Ability2";
-        axes.abilities[2] = "Ability3";
-        axes.abilities[3] = "Ability4";
-        axes.abilities[4] = "Ability5";
-        axes.abilities[5] = "Ability6";
-        axes.to_config = "To config";
-        axes.reload_weapon = "Reload weapon";
-        axes.fire1 = "Fire1";
-        axes.fire2 = "Fire2";
-        axes.jump = "Jump";
+        axes.horizontal=new OneAxis("Horizontal","d","a");
+        axes.vertical = new OneAxis( "Vertical","w","s");
+        axes.abilities = new OneAxis[6];
+        axes.abilities[0] = new OneAxis("Ability1", "q");
+        axes.abilities[1] = new OneAxis("Ability2", "e");
+        axes.abilities[2] = new OneAxis("Ability3", "x");
+        axes.abilities[3] = new OneAxis("Ability4", "c");
+        axes.abilities[4]= new OneAxis("Ability5", "v");
+        axes.abilities[5] = new OneAxis("Ability6", "shift");
+        axes.to_config = new OneAxis("To config","b");
+        axes.reload_weapon = new OneAxis("Reload weapon","r");
+        axes.fire1 = new OneAxis( "Fire1","mouse 0");
+        axes.fire2 = new OneAxis( "Fire2","mouse 1");
+        axes.jump = new OneAxis( "Jump","space");
     }
 
-    // Update is called once per frame
     void Update()
     {
         
