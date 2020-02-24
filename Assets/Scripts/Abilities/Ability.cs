@@ -10,8 +10,10 @@ public class Ability : MonoBehaviour
 
     protected bool m_OnStart=false;
     protected bool m_IsAvailable= true;
+    protected float m_Timer;
+    protected float m_TimerAvailable = 0;
 
-    public float m_TimerAvailable = 0;
+    protected List<GameObject> m_CurrentActiveEffectList=new List<GameObject>();
     public virtual void StartAbility()
     {
         if (m_IsAvailable)
@@ -30,6 +32,32 @@ public class Ability : MonoBehaviour
                 m_TimerAvailable = 0f;
                 m_IsAvailable = true;
             }
+        }
+    }
+
+    protected virtual void FixedUpdate()
+    {
+        if (m_OnStart)
+        {
+            m_Timer += Time.deltaTime;
+            if (m_DealayTime <= m_Timer)
+            {
+                OnEffects();
+                m_Timer = 0f;
+                m_OnStart = false;
+                m_IsAvailable = false;
+            }
+        }
+    }
+
+    protected virtual void OnEffects()
+    {
+        m_CurrentActiveEffectList.Clear();
+        for(int i = 0; i < m_EffectsList.Length; i++)
+        {
+            GameObject newEffect = Instantiate(m_EffectsList[i]) as GameObject;
+            m_CurrentActiveEffectList.Add(newEffect);
+            transform.parent.parent.gameObject.GetComponent<HumanEffectsController>().SetEffect(newEffect);
         }
     }
 

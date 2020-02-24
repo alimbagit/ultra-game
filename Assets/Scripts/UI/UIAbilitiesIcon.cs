@@ -8,7 +8,7 @@ public class UIAbilitiesIcon : MonoBehaviour
     public string m_HeroTag = "HeroHuman";
 
     private Text[] m_TextAbilitiesIcon;
-    void Start()
+    void Awake()
     {
         m_TextAbilitiesIcon = new Text[transform.childCount];
         for(int i = 0; i < transform.childCount; i++)
@@ -19,6 +19,7 @@ public class UIAbilitiesIcon : MonoBehaviour
 
     public void SetTextIconAbility(int index, string str)
     {
+
         m_TextAbilitiesIcon[index].text = str;
     }
 
